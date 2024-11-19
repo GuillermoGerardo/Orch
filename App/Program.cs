@@ -1,12 +1,18 @@
 using orch;
 using App;
 using System.CommandLine;
+using System.CommandLine.Builder;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using System.CommandLine.Parsing;
+using Serilog;
+using System.Linq;
 
 namespace Orch.App
 {
     public class Orch
     {
+        //internal static List<string> argList = new List<string>();
         static async Task<int> Main(string[] args)
         {
             Config.InitDisplay();
@@ -42,9 +48,13 @@ namespace Orch.App
             //     }
             // }, dummyOption, excellOption);
             
-            AbscenceAssessment.SetHandler((dummy, audit, env) => {
-                Console.WriteLine("Abscence Assesment");
-                
+
+
+            AbscenceAssessment.SetHandler((dummy, audit, env) =>
+            {
+                Console.WriteLine($"Abscence Assesment Environment - {env}");
+                string[] argumentList = { env };
+                Config.AbsenceBuilder(argumentList).Build().Run();
                 //if (dummy){
                 //    Console.WriteLine("dummy mode");
                 //}else{
@@ -55,23 +65,21 @@ namespace Orch.App
                 //}else{
                 //    Console.WriteLine("no-log mode");
                 //}
-
-
             }, dummyOption, excellOption, environmentOption);
 
-            
+            //var builder = new CommandLineBuilder(rootCommand)
+            //    .UseDefaults().UseDependencyInjection(services =>
+            //    {
+            //        services.AddSingleton(AnsiConsole.Console);
+            //    }
+            //).Build();
+
 
             return await rootCommand.InvokeAsync(args);
+            //return builder.Build().Invoke(args);
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-                Host.CreateDefaultBuilder(args).ConfigureServices((HostContent, Services) =>
-                {
-                    
-                });
-
-
-
+        
     }
 }
 
