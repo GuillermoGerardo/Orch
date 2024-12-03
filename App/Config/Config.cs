@@ -11,8 +11,11 @@ using orch.Domain.Context;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using Orch.App;
 using Orch.Services.AbsenceProcess;
+using Orch.Services.PipeProcess;
 using Orch.Infrastructure.Interfaces;
 using Orch.Infrastructure.Repository;
+using orch.Services.QueryProcess;
+using Orch.Services.ExcellProcess;
 
 namespace App
 {
@@ -35,7 +38,11 @@ namespace App
                     Services.AddTransient<XLWorkbook>();
                     Services.StartDatabase(HostContent.Configuration, args[0]);
                     Services.AddTransient<AbsenceAssessment>();
+                    Services.AddTransient<QueryService>();
+                    Services.AddTransient<PipeSelector>();
+                    Services.AddTransient<ExcellService>();
                     Services.AddScoped<IAbsenceAssessmentDetails, SoarianRepository>();
+                    Services.AddScoped<IGenericQuery, SoarianRepository>();
                     Services.AddHostedService<AbsWorker>();
                     //Services.AddHostedService<Worker>();
                 })

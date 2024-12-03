@@ -4,17 +4,23 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Orch.Domain.Models;
 
 namespace Core.Models
 {
     [Keyless]
-    public class AssesmentRequestDTO
+    public partial class AssesmentRequestDTO
     {
-        [NotMapped]
+        public AssesmentRequestDTO() 
+        { 
+            PatientDetails = new HashSet<PatientDetails>();
+            CaseDetails = new HashSet<CaseDetails>();
+        }
         public int? PatientOid  { get; set; }
-        [NotMapped]
         public int? PatientVisitOid { get; set; }
-        [NotMapped]
         public int? AssessmentId { get; set; }
+
+        public ICollection<PatientDetails> PatientDetails { get; set; }
+        public ICollection<CaseDetails> CaseDetails { get; set; }
     }
 }

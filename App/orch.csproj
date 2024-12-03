@@ -2,13 +2,40 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-orch-0f26994c-8376-4c85-986f-ca6dd840fcde</UserSecretsId>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Include=".\\assets\\swampland.flf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\\Services\\TIBCO\\PipeSelector.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\\Services\\TIBCO\\PipeSelector.exe.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\\Services\\TIBCO\\PipeSelector.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\\Services\\TIBCO\\icudt36.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\\Services\\TIBCO\\icuuc36.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\\Services\\TIBCO\\ssoDotNet.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\\Services\\TIBCO\\ssoDotNetV.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\\Services\\TIBCO\\ssoDotNetXML.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <PackageReference Include="ClosedXML" Version="0.104.1" />
@@ -26,4 +53,5 @@
     <ProjectReference Include="..\Infrastructure\orch.Infrastructure.csproj" />
     <ProjectReference Include="..\Services\orch.Services.csproj" />
   </ItemGroup>
+
 </Project>

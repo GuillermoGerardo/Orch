@@ -15,7 +15,7 @@ using Microsoft.SqlServer.Server;
 
 namespace Orch.Infrastructure.Repository
 {
-    public class SoarianRepository : IAbsenceAssessmentDetails
+    public class SoarianRepository : IAbsenceAssessmentDetails, IGenericQuery
     {
         private readonly SoarianContext _db;
         private readonly ILogger<SoarianRepository> _logger;
@@ -71,6 +71,22 @@ namespace Orch.Infrastructure.Repository
                 // _logger.LogInformation($"rawList = {rawlist}");
             // return _db.AssesmentRequestDTO.FromSqlRaw(rawQuery).DefaultIfEmpty().ToList();
             return queryEl;
+        }
+
+        public string CheckForMrn(int? patientOid)
+        {
+            var returnValue = _db.HpatientIdentifiers.Where(x => x.PatientOid == patientOid && x.Type == "MR").ToList();
+            if (!returnValue.Any())
+                throw new Exception($"MRN");
+            return $"{returnValue.FirstOrDefault()!.Value!.ToString()}";
+        }
+
+        public string CheckForClinic(int? patientOid)
+        {
+            var returnValue = _db.HpatientVisits.Where(x => x.PatientOid == patientOid && x.IsDeleted == 0 && x.VisitEndDateTime == null).ToList();
+            if (!returnValue.Any())
+                throw new Exception($"CLINIC");
+            return $"{returnValue.FirstOrDefault()!.EntityName.ToString()}";
         }
     }
 }

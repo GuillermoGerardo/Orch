@@ -1,4 +1,7 @@
+using Core.Models;
+using orch.Services.QueryProcess;
 using Orch.Services.AbsenceProcess;
+using Orch.Services.ExcellProcess;
 
 namespace Orch.App;
 
@@ -6,13 +9,17 @@ public class AbsWorker : BackgroundService
 {
     private readonly ILogger<AbsWorker> _logger;
     private readonly AbsenceAssessment _absenceAssessment;
+    private readonly QueryService _queryService;
+    private readonly ExcellService _excellService;
     IHostApplicationLifetime _applicationLifetime;
 
-    public AbsWorker(ILogger<AbsWorker> logger, IHostApplicationLifetime applicationLifetime, AbsenceAssessment absenceAssessment)
+    public AbsWorker(ILogger<AbsWorker> logger, IHostApplicationLifetime applicationLifetime, AbsenceAssessment absenceAssessment, QueryService queryService, ExcellService excellService)
     {
         _logger = logger;
         _absenceAssessment = absenceAssessment;
         _applicationLifetime = applicationLifetime;
+        _queryService = queryService;
+        _excellService = excellService;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -25,9 +32,19 @@ public class AbsWorker : BackgroundService
             {
                 //_logger.LogInformation("Worker running at: {time} string: {value}", DateTimeOffset.Now, arrayList[envIdx+1]);
                 _logger.LogInformation("Running at ({time})", DateTimeOffset.Now);
-                string breaker = "breaka!";
-                _absenceAssessment.ProcessAbsenceAssessment();
+                List<AssesmentRequestDTO> result = 
+                    _absenceAssessment.ProcessAbsenceAssessment(arrayList[envIdx + 1], (arrayList.Contains("--logging") || arrayList.Contains("-l")) );
+                if (result.Count > 0 && (arrayList.Contains("-a") || arrayList.Contains("--audit"))) 
+                {
+                    result = _queryService.PatientClinicMrn(result);
+                    _logger.LogInformation("Exporting processed records..");
+                    _excellService.PrintAbsenceAssessment(result, arrayList[envIdx + 1]);
+                    _logger.LogInformation("Done, closing program.");
+                    string breaker = "";
+                }
+                
             }
+            Environment.Exit(0);
             await Task.Delay(1000, stoppingToken);
         }
     }

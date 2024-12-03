@@ -18,11 +18,11 @@ namespace Orch.App
             Config.InitDisplay();
 
             var dummyOption = new Option<bool>(
-                    name: "--dummy",
+                    name: "--logging",
                     description:"Run the app without write operations",
                     getDefaultValue: () => false
                 );
-            dummyOption.AddAlias("-d");
+            dummyOption.AddAlias("-l");
             var excellOption = new Option<bool>(
                     name: "--audit",
                     description:"Mode to export app result values to excell file",
