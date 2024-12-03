@@ -18,13 +18,14 @@ public class AbsenceAssessment
     private readonly ILogger<AbsenceAssessment> _logger;
     private readonly IAbsenceAssessmentDetails _repository;
     private readonly IConfiguration _configuration;
-    
+    private readonly PipeSelector _pipeSelector;
 
-    public AbsenceAssessment(ILogger<AbsenceAssessment> logger, IAbsenceAssessmentDetails repository, IConfiguration configuration)
+    public AbsenceAssessment(ILogger<AbsenceAssessment> logger, IAbsenceAssessmentDetails repository, IConfiguration configuration, PipeSelector pipeSelector)
     {
         _logger = logger;
         _repository = repository;
         _configuration = configuration;
+        _pipeSelector = pipeSelector;
     }
 
     public List<AssesmentRequestDTO> ProcessAbsenceAssessment(string environment, bool writeFlag)
@@ -43,7 +44,7 @@ public class AbsenceAssessment
                 if (!String.IsNullOrEmpty(assessments.Select(a => a.PatientOid).FirstOrDefault().ToString()))
                 {
                     foreach (var assesment in assessments)
-                    { 
+                    {
                         _logger.LogInformation($"Calling FWASMERR case for (POid) (Pvisit) (AssmtID): {assesment.PatientOid}, {assesment.PatientVisitOid}, {assesment.AssessmentId}");
                         if (!writeFlag)
                         {
@@ -52,16 +53,15 @@ public class AbsenceAssessment
                             _configuration.GetRequiredSection("SSO").GetSection("User").Value!, _configuration.GetRequiredSection("SSO").GetSection("Pass").Value!,
                             environment);
                         }
-                        if (!String.IsNullOrEmpty(numberCase) ) 
+                        if (!String.IsNullOrEmpty(numberCase))
                         {
-                            //result.Add($"{assesment.PatientOid},{assesment.PatientVisitOid},{assesment.AssessmentId},{numberCase}");
-                            
                             assesment.CaseDetails.Add(
                                 new CaseDetails()
                                 {
                                     caseNumber = int.Parse(numberCase)
                                 });
                             returnList.Add(assesment);
+                            numberCase = "";
                         }
                         else 
                         {
@@ -73,8 +73,6 @@ public class AbsenceAssessment
                             {
                                 _logger.LogWarning($"Running on Logging mode.");
                             }
-                            //result.Add($"{assesment.PatientOid},{assesment.PatientVisitOid},{assesment.AssessmentId},-1");
-                            //assesment.CaseDetails.FirstOrDefault()!.caseNumber = 1;
                             assesment.CaseDetails.Add( 
                                 new CaseDetails() { 
                                 caseNumber = 0
@@ -99,7 +97,7 @@ public class AbsenceAssessment
     {
         _logger.LogInformation("Entering FWASMERRCASE...");
         var caseNumber = 
-            PipeSelector.RunPipe("FWASMERRCASE", $"{user}, {pass}, WTP264AbsenceAssessment, {environment}, {PatientOid}, {PatientVisitOid}, {AssessmentId}");
+           _pipeSelector.RunPipe("FWASMERRCASE", $"{user},{pass},WTP264AbsenceAssessment,{environment},{PatientOid},{PatientVisitOid},{AssessmentId}");
         return caseNumber;
     }
 }

@@ -12,7 +12,6 @@ namespace Orch.App
 {
     public class Orch
     {
-        //internal static List<string> argList = new List<string>();
         static async Task<int> Main(string[] args)
         {
             Config.InitDisplay();
@@ -40,53 +39,15 @@ namespace Orch.App
             rootCommand.Add(AbscenceAssessment);
 
             AbscenceAssessment.AddOption(environmentOption);
-            // rootCommand.SetHandler((dummy, audit) => {
-            //     if (dummy){
-            //         Console.WriteLine("dummy mode");
-            //     }else{
-            //         Console.WriteLine("normal mode");
-            //     }
-            // }, dummyOption, excellOption);
-            
-
-
             AbscenceAssessment.SetHandler((dummy, audit, env) =>
             {
                 Console.WriteLine($"Abscence Assesment Environment - {env}");
                 string[] argumentList = { env };
                 Config.AbsenceBuilder(argumentList).Build().Run();
-                //if (dummy){
-                //    Console.WriteLine("dummy mode");
-                //}else{
-                //    Console.WriteLine("write mode");
-                //}
-                //if  (audit){
-                //    Console.WriteLine("audit mode");
-                //}else{
-                //    Console.WriteLine("no-log mode");
-                //}
             }, dummyOption, excellOption, environmentOption);
-
-            //var builder = new CommandLineBuilder(rootCommand)
-            //    .UseDefaults().UseDependencyInjection(services =>
-            //    {
-            //        services.AddSingleton(AnsiConsole.Console);
-            //    }
-            //).Build();
 
 
             return await rootCommand.InvokeAsync(args);
-            //return builder.Build().Invoke(args);
         }
-
-        
     }
 }
-
-
-
-// var builder = Host.CreateApplicationBuilder(args);
-// builder.Services.AddHostedService<Worker>();
-
-// var host = builder.Build();
-// host.Run();

@@ -30,7 +30,6 @@ public class AbsWorker : BackgroundService
         {
             if (_logger.IsEnabled(LogLevel.Information))
             {
-                //_logger.LogInformation("Worker running at: {time} string: {value}", DateTimeOffset.Now, arrayList[envIdx+1]);
                 _logger.LogInformation("Running at ({time})", DateTimeOffset.Now);
                 List<AssesmentRequestDTO> result = 
                     _absenceAssessment.ProcessAbsenceAssessment(arrayList[envIdx + 1], (arrayList.Contains("--logging") || arrayList.Contains("-l")) );
@@ -40,9 +39,7 @@ public class AbsWorker : BackgroundService
                     _logger.LogInformation("Exporting processed records..");
                     _excellService.PrintAbsenceAssessment(result, arrayList[envIdx + 1]);
                     _logger.LogInformation("Done, closing program.");
-                    string breaker = "";
                 }
-                
             }
             Environment.Exit(0);
             await Task.Delay(1000, stoppingToken);

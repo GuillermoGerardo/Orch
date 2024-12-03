@@ -1,21 +1,15 @@
-using System;
-using Figgle;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Serilog;
 using ClosedXML.Excel;
-using orch;
+using Figgle;
+using Microsoft.EntityFrameworkCore;
 using orch.Domain.Context;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using orch.Services.QueryProcess;
 using Orch.App;
-using Orch.Services.AbsenceProcess;
-using Orch.Services.PipeProcess;
 using Orch.Infrastructure.Interfaces;
 using Orch.Infrastructure.Repository;
-using orch.Services.QueryProcess;
+using Orch.Services.AbsenceProcess;
 using Orch.Services.ExcellProcess;
+using Orch.Services.PipeProcess;
+using Serilog;
 
 namespace App
 {
@@ -44,22 +38,10 @@ namespace App
                     Services.AddScoped<IAbsenceAssessmentDetails, SoarianRepository>();
                     Services.AddScoped<IGenericQuery, SoarianRepository>();
                     Services.AddHostedService<AbsWorker>();
-                    //Services.AddHostedService<Worker>();
                 })
             .UseSerilog((context, configuration) => {
                 configuration.ReadFrom.Configuration(context.Configuration);
             });
-
-        //public static void RegisterServices(IServiceCollection services)
-        //{
-        //    //services.AddTransient<Appsettings>();
-        //    //services.AddTransient<ModalityRecords>();
-        //    //services.AddTransient<ExcellRunService>();
-        //    //services.AddScoped<IModalityDetailsRepository, ModalityDetailsRepository>();
-        //    //services.AddTransient<XLWorkbook>();
-
-        //}
-
         public static void StartDatabase(this IServiceCollection services, IConfiguration configuration, string instance)
         {
             services.AddDbContext<SoarianContext>(options => {
@@ -70,20 +52,6 @@ namespace App
                     //    sqlOptions.CommandTimeout(0);
                 });
             }, ServiceLifetime.Transient);
-            // services.AddTransient<Soarian_Clin_Prd_1Context>();
         }
-
-        //     public static void StartDatabase(this IServiceCollection services, IConfiguration configuration, string instance)
-        //    {
-        //         // services.AddDbContext<Soarian_Clin_Prd_1Context>(options => {
-        //         //     options.UseSqlServer(configuration.GetConnectionString(instance)
-        //         //     ,sqlServerOptionsAction: sqlOptions =>
-        //         //     {
-        //         //        sqlOptions.EnableRetryOnFailure();
-        //         //     //    sqlOptions.CommandTimeout(0);
-        //         //     });
-        //         //     }, ServiceLifetime.Transient);
-        //         // services.AddTransient<Soarian_Clin_Prd_1Context>();
-        //    } 
     }
 }

@@ -12,21 +12,18 @@ namespace Orch.Services.PipeProcess
 {
     public class PipeSelector
     {
-        public static ILogger<PipeSelector> _logger;
+        public ILogger<PipeSelector> _logger;
         public PipeSelector(ILogger<PipeSelector> logger) 
         {
             _logger = logger;
         }
 
-        public static string RunPipe(string option, string args)
+        public string RunPipe(string option, string args)
         {
+            _logger.LogInformation("Calling Pipe.");
             string sreturn = "";
-            //Process process = Process.Start("PipeSelector.exe", option);
+            Process process = Process.Start("PipeSelector.exe", option);
 
-            //string breaker = "";
-
-            
-            //Task.Delay(5000);
             using (var client = new NamedPipeClientStream(".", "PipeSelector", PipeDirection.InOut))
             {
                 client.Connect();
@@ -38,8 +35,13 @@ namespace Orch.Services.PipeProcess
 
                     sreturn = reader.ReadLine();
                     _logger.LogInformation($"Returning information from bridge: {sreturn}");
+                    writer.Dispose();
+                    reader.Dispose();
                 }
+                client.Dispose();
             }
+            _logger.LogInformation("Closing pipe last step.");
+            process.Dispose();
             return sreturn;
         }
     }

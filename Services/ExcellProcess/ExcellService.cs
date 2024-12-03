@@ -30,7 +30,9 @@ namespace Orch.Services.ExcellProcess
                     PatientOid = item.PatientOid.ToString()!,
                     PatientVisitOid = item.PatientVisitOid.ToString()!,
                     AssessmentId = item.AssessmentId.ToString()!,
-                    CaseNumber = item.CaseDetails.FirstOrDefault()!.caseNumber.ToString()!,
+                    CaseNumber = (
+                        (item.CaseDetails.FirstOrDefault()!.caseNumber.ToString()!) != "0" ? 
+                        (item.CaseDetails.FirstOrDefault()!.caseNumber.ToString()!) : "-1"),
                     Mrn = item.PatientDetails.FirstOrDefault()!.Mrn.ToString(),
                     Clinic = item.PatientDetails.FirstOrDefault()!.Clinic.ToString()
                 });
