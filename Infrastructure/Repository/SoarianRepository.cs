@@ -60,16 +60,16 @@ namespace Orch.Infrastructure.Repository
                 })
             .DefaultIfEmpty()
             .ToList();
+            // Raw query sample.
             // string rawQuery = 
             //     $"SELECT Patient_oid, PatientVisit_oid, AssessmentID " +
-	        //     $"FROM Soarian_Clin_Prd_1.DBO.HAssessment ha WITH (NOLOCK) " +
-	        //     $"WHERE Patient_oid = {Patient_oid} and FormUsageDisplayName = 'Absence and Hospitalization Record' " +
-	        //     $"and datepart(MONTH, ha.creationtime) = {Month} and datepart(day, ha.creationtime) = {Day} " +
-	        //     $"and datepart(YEAR, ha.creationtime) = {Year} and EndDT is null and AssessmentStatusCode = 1 " +
-	        //     $"ORDER BY CreationTime DESC";
-                // var rawlist = _db.Hassessments.FromSqlRaw(rawQuery).ToList();
-                // _logger.LogInformation($"rawList = {rawlist}");
-            // return _db.AssesmentRequestDTO.FromSqlRaw(rawQuery).DefaultIfEmpty().ToList();
+            //     $"FROM Soarian_Clin_Prd_1.DBO.HAssessment ha WITH (NOLOCK) " +
+            //     $"WHERE Patient_oid = {Patient_oid} and FormUsageDisplayName = 'Absence and Hospitalization Record' " +
+            //     $"and datepart(MONTH, ha.creationtime) = {Month} and datepart(day, ha.creationtime) = {Day} " +
+            //     $"and datepart(YEAR, ha.creationtime) = {Year} and EndDT is null and AssessmentStatusCode = 1 " +
+            //     $"ORDER BY CreationTime DESC";
+            // Raw query sample.
+
             return queryEl;
         }
 

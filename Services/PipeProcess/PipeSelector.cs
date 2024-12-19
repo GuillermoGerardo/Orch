@@ -18,7 +18,7 @@ namespace Orch.Services.PipeProcess
             _logger = logger;
         }
 
-        public string RunPipe(string option, string args)
+        public string RunPipeCaseSelector(string option, string args)
         {
             _logger.LogInformation("Calling Pipe.");
             string sreturn = "";
@@ -30,7 +30,6 @@ namespace Orch.Services.PipeProcess
                 using (var writer = new StreamWriter(client) { AutoFlush = true })
                 using (var reader = new StreamReader(client))
                 {
-                    //writer.AutoFlush = true;
                     writer.WriteLine($"{args}");
 
                     sreturn = reader.ReadLine();

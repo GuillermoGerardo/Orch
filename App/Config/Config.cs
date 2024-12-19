@@ -26,6 +26,13 @@ namespace App
             Console.ResetColor();
         }
 
+        public static void SwitchConsole(ConsoleColor color, string Message) 
+        {
+            Console.ForegroundColor = color;
+            Console.WriteLine($"{Message}");
+            Console.ResetColor();
+        }
+
         public static IHostBuilder AbsenceBuilder(string[] args) =>
                 Host.CreateDefaultBuilder(args).ConfigureServices((HostContent, Services) =>
                 {

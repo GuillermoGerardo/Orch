@@ -1,15 +1,9 @@
-﻿using System.Linq;
-using System.IO.Pipes;
-using com.staffware.sso.data;
-using com.staffware.sso.server;
+﻿using Core.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Orch.Infrastructure.Interfaces;
-using System.Diagnostics;
-using Orch.Services.PipeProcess;
 using Orch.Domain.Models;
-using static System.Net.WebRequestMethods;
-using Core.Models;
+using Orch.Infrastructure.Interfaces;
+using Orch.Services.PipeProcess;
 
 namespace Orch.Services.AbsenceProcess;
 
@@ -38,14 +32,16 @@ public class AbsenceAssessment
         _logger.LogInformation($"Query Absence Assessment Count: {absenceDetails.Count()} records");
             foreach (var details in absenceDetails)
             {
-            _logger.LogInformation($"Loading information for Poid number: {details.Patient_oid}");
+            _logger.LogInformation("Loading information for Poid number: {PatientOid}", details.Patient_oid);
 
                 var assessments = _repository.AbssenceAssesmentsRecords(details.Patient_oid, details.Month, details.Day, details.Year);
                 if (!String.IsNullOrEmpty(assessments.Select(a => a.PatientOid).FirstOrDefault().ToString()))
                 {
                     foreach (var assesment in assessments)
                     {
-                        _logger.LogInformation($"Calling FWASMERR case for (POid) (Pvisit) (AssmtID): {assesment.PatientOid}, {assesment.PatientVisitOid}, {assesment.AssessmentId}");
+                        _logger.LogInformation(
+                            "Calling FWASMERR case for (POid) (Pvisit) (AssmtID): {PatientOid}, {PatientVisitOid}, {AssessmentId}",  
+                            assesment.PatientOid, assesment.PatientVisitOid, assesment.AssessmentId);
                         if (!writeFlag)
                         {
                             numberCase = SendFWASMERRCase(
@@ -55,6 +51,7 @@ public class AbsenceAssessment
                         }
                         if (!String.IsNullOrEmpty(numberCase))
                         {
+                            _logger.LogInformation("Number case from pipe: {number}", numberCase);
                             assesment.CaseDetails.Add(
                                 new CaseDetails()
                                 {
@@ -97,7 +94,7 @@ public class AbsenceAssessment
     {
         _logger.LogInformation("Entering FWASMERRCASE...");
         var caseNumber = 
-           _pipeSelector.RunPipe("FWASMERRCASE", $"{user},{pass},WTP264AbsenceAssessment,{environment},{PatientOid},{PatientVisitOid},{AssessmentId}");
+           _pipeSelector.RunPipeCaseSelector("FWASMERRCASE", $"{user},{pass},WTP264AbsenceAssessment,{environment},{PatientOid},{PatientVisitOid},{AssessmentId}");
         return caseNumber;
     }
 }

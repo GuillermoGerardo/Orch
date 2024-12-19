@@ -24,6 +24,7 @@ public class AbsWorker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        string closed = "Done, Closing program.";
         var arrayList = Environment.GetCommandLineArgs();
         var envIdx = Array.FindIndex( arrayList, x => x.Contains("-e") );
         while (!stoppingToken.IsCancellationRequested)
@@ -38,7 +39,7 @@ public class AbsWorker : BackgroundService
                     result = _queryService.PatientClinicMrn(result);
                     _logger.LogInformation("Exporting processed records..");
                     _excellService.PrintAbsenceAssessment(result, arrayList[envIdx + 1]);
-                    _logger.LogInformation("Done, closing program.");
+                    _logger.LogInformation("{closing}", closed);
                 }
             }
             Environment.Exit(0);

@@ -41,7 +41,7 @@ namespace Orch.App
             AbscenceAssessment.AddOption(environmentOption);
             AbscenceAssessment.SetHandler((dummy, audit, env) =>
             {
-                Console.WriteLine($"Abscence Assesment Environment - {env}");
+                Config.SwitchConsole(ConsoleColor.Green, $"Abscence Assesment Environment - {env}");
                 string[] argumentList = { env };
                 Config.AbsenceBuilder(argumentList).Build().Run();
             }, dummyOption, excellOption, environmentOption);
