@@ -36,9 +36,9 @@ public class AbsWorker : BackgroundService
                     _absenceAssessment.ProcessAbsenceAssessment(arrayList[envIdx + 1], (arrayList.Contains("--logging") || arrayList.Contains("-l")) );
                 if (result.Count > 0 && (arrayList.Contains("-a") || arrayList.Contains("--audit"))) 
                 {
-                    result = _queryService.PatientClinicMrn(result);
+                    result = _queryService.PatientClinicMrn(result, "Absence");
                     _logger.LogInformation("Exporting processed records..");
-                    _excellService.PrintAbsenceAssessment(result, arrayList[envIdx + 1]);
+                    _excellService.Print(result, arrayList[envIdx + 1], "Absence");
                     _logger.LogInformation("{closing}", closed);
                 }
             }

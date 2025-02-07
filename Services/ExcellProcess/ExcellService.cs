@@ -15,26 +15,36 @@ namespace Orch.Services.ExcellProcess
     {
         public ExcellService() { }
 
-        public void PrintAbsenceAssessment(List<AssesmentRequestDTO> resultList, string environment ) 
+        public void Print(List<AssesmentRequestDTO> resultList, string environment, string type ) 
         {
-            Print($"Absence Assessments ({environment})", "AbsenceAssessment.xlsx", resultList);
+            switch (type)
+            {
+                case "Absence":
+                    PrintAbsenceAssessment($"Absence Assessments ({environment})", "AbsenceAssessment.xlsx", resultList);
+                break;
+            }
         }
 
-        private void Print(string tagMessage, string fileName, List<AssesmentRequestDTO> assesmentRequest)
+        private void PrintAbsenceAssessment(string tagMessage, string fileName, List<AssesmentRequestDTO> assesmentRequest)
         {
+            //TODO Generic call to set Spreadsheet
             List<PrintAbscenceEntity> printEntity = new List<PrintAbscenceEntity>();
+            string cResult = "";
             foreach (var item in assesmentRequest)
             {
+                cResult = item.PatientDetails.FirstOrDefault()!.Clinic.ToString();
+
+
                 printEntity.Add(new PrintAbscenceEntity()
                 {
                     PatientOid = item.PatientOid.ToString()!,
                     PatientVisitOid = item.PatientVisitOid.ToString()!,
                     AssessmentId = item.AssessmentId.ToString()!,
                     CaseNumber = (
-                        (item.CaseDetails.FirstOrDefault()!.caseNumber.ToString()!) != "0" ? 
+                        (item.CaseDetails.FirstOrDefault()!.caseNumber.ToString()!) != "0" ?
                         (item.CaseDetails.FirstOrDefault()!.caseNumber.ToString()!) : "-1"),
                     Mrn = item.PatientDetails.FirstOrDefault()!.Mrn.ToString(),
-                    Clinic = item.PatientDetails.FirstOrDefault()!.Clinic.ToString()
+                    Clinic = cResult.Split(":")[0]
                 });
             }
             var wbook = new XLWorkbook();
@@ -45,6 +55,10 @@ namespace Orch.Services.ExcellProcess
             wsheet.Cell("D1").Value = "CaseNumber";
             wsheet.Cell("E1").Value = "Mrn";
             wsheet.Cell("F1").Value = "Clinic";
+            //if (cResult)
+            //{
+
+            //}
 
             var range = wsheet.Range("A1:H1");
             range.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;

@@ -12,6 +12,7 @@ using System.Runtime.CompilerServices;
 using Core.Models;
 using System.ComponentModel;
 using Microsoft.SqlServer.Server;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Orch.Infrastructure.Repository
 {
@@ -37,6 +38,7 @@ namespace Orch.Infrastructure.Repository
                 "and ha.CreationTime > '01/01/2021' AND HA.AssessmentStatusCode = 1 AND HA.CreatedUserId = 6 and ha.Version = 0 " +
                 "group by ha.Patient_oid, datepart(MONTH, ha.creationtime), datepart(day, ha.creationtime), datepart(YEAR, ha.creationtime))A1 " +
                 "WHERE A1.AssessmentCount > 1 ORDER BY A1.AssessmentCount DESC";
+            _db.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
             return _db.AbsenceAssesments.FromSqlRaw(rawQuery).ToList();
         }
 
@@ -81,12 +83,21 @@ namespace Orch.Infrastructure.Repository
             return $"{returnValue.FirstOrDefault()!.Value!.ToString()}";
         }
 
-        public string CheckForClinic(int? patientOid)
+        public string CheckForClinic(int? patientOid, string type)
         {
-            var returnValue = _db.HpatientVisits.Where(x => x.PatientOid == patientOid && x.IsDeleted == 0 && x.VisitEndDateTime == null).ToList();
+            //'Abscence' Type includes closed visit criteria else just includes 'Open' visit criteria
+            var returnValue = (!type.IsNullOrEmpty()) ?
+                _db.HpatientVisits.Where(
+                x => x.PatientOid == patientOid && x.IsDeleted == 0 && x.VisitEndDateTime == null
+                  || x.PatientOid == patientOid && x.IsDeleted == 0 && x.VisitEndDateTime != null
+                ).ToList()
+                : _db.HpatientVisits.Where(
+                x => x.PatientOid == patientOid && x.IsDeleted == 0 && x.VisitEndDateTime == null
+                ).ToList();
             if (!returnValue.Any())
-                throw new Exception($"CLINIC");
-            return $"{returnValue.FirstOrDefault()!.EntityName.ToString()}";
+                return "Unavailable";
+            return $"{returnValue.FirstOrDefault()!.EntityName.ToString()}:{type}";
+
         }
     }
 }

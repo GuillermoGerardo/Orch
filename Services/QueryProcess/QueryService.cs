@@ -21,7 +21,7 @@ namespace orch.Services.QueryProcess
             _repository = repository;
         }
 
-        public List<AssesmentRequestDTO> PatientClinicMrn(List<AssesmentRequestDTO> patientData)
+        public List<AssesmentRequestDTO> PatientClinicMrn(List<AssesmentRequestDTO> patientData, string type="")
         {
             List<AssesmentRequestDTO> returnList = new List<AssesmentRequestDTO>();
             foreach (var item in patientData)
@@ -31,7 +31,7 @@ namespace orch.Services.QueryProcess
                     new PatientDetails()
                     {
                         Mrn = _repository.CheckForMrn(item.PatientOid),
-                        Clinic = _repository.CheckForClinic(item.PatientOid).ToString()
+                        Clinic = _repository.CheckForClinic(item.PatientOid, type).ToString()
                     }
                 );
                 returnList.Add(item);

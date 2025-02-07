@@ -9,6 +9,6 @@ namespace Orch.Infrastructure.Interfaces
     public interface IGenericQuery
     {
         string CheckForMrn(int? patientOid);
-        string CheckForClinic(int? patientOid);
+        string CheckForClinic(int? patientOid, string type);
     }
 }
