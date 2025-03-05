@@ -27,7 +27,7 @@ namespace Orch.Infrastructure.Repository
             _logger = logger;
         }
 
-        public List<AbsenceAssesmentsDTO> GetAbsenceAssesments()
+        public List<AbsenceAssesmentsDTO> GetAbsenceAssesments(string[] pOid)
         {
             string rawQuery =
                 "select a1.* from ( " +
@@ -39,7 +39,12 @@ namespace Orch.Infrastructure.Repository
                 "group by ha.Patient_oid, datepart(MONTH, ha.creationtime), datepart(day, ha.creationtime), datepart(YEAR, ha.creationtime))A1 " +
                 "WHERE A1.AssessmentCount > 1 ORDER BY A1.AssessmentCount DESC";
             _db.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
-            return _db.AbsenceAssesments.FromSqlRaw(rawQuery).ToList();
+            var returnQuery = _db.AbsenceAssesments.FromSqlRaw(rawQuery).ToList();
+            if (pOid.Length > 0 && !string.IsNullOrEmpty(pOid[0])) 
+            {
+                returnQuery = returnQuery.Where(x => pOid.Contains(x.Patient_oid.ToString())).ToList();
+            }
+            return returnQuery;
         }
 
         public List<AssesmentRequestDTO?> AbssenceAssesmentsRecords(int Patient_oid, int Month, int Day, int Year)
@@ -58,7 +63,8 @@ namespace Orch.Infrastructure.Repository
                 {
                     PatientOid = x.PatientOid,
                     PatientVisitOid = x.PatientVisitOid,
-                    AssessmentId = x.AssessmentId
+                    AssessmentId = x.AssessmentId,
+                    AssessmentDate = $"{x.CreationTime!.Value.Month}/{x.CreationTime.Value.Day}/{x.CreationTime.Value.Year}"
                 })
             .DefaultIfEmpty()
             .ToList();

@@ -28,6 +28,23 @@ namespace Orch.App
                     getDefaultValue: () => false
                 );
             excellOption.AddAlias("-a");
+            //var filterOption = new Option<string>("--filter", "Filter results from query") { IsRequired = false };
+            var filterOption = new Option<string>(
+                    name: "--filter",
+                    description: "Filter results from query, add ':' Char to make it as array",
+                    isDefault: false,
+                    parseArgument: result =>
+                    {
+                        if (String.IsNullOrEmpty(result.Tokens.Single().Value) || !result.Tokens.Single().Value.Contains(':'))
+                        {
+                            result.ErrorMessage = "Incorrect format/No parameter, switch to false filter flag";
+                            return "";
+                        }
+                        return result.Tokens.Single().Value;
+                    }
+                    //getDefaultValue: () => false
+                );
+            filterOption.AddAlias("-f");
             var environmentOption = new Option<string>("--environment", "Target environment") { IsRequired = true};
             environmentOption.FromAmong("DEV_A","DEV_B","QA_A","QA_B","PSUP_A","PSUP_B","PSUP_E","PROD_A","PROD_B","PROD_C","PROD_E");
             environmentOption.AddAlias("-e");
@@ -39,12 +56,13 @@ namespace Orch.App
             rootCommand.Add(AbscenceAssessment);
 
             AbscenceAssessment.AddOption(environmentOption);
-            AbscenceAssessment.SetHandler((dummy, audit, env) =>
+            AbscenceAssessment.AddOption(filterOption);
+            AbscenceAssessment.SetHandler((dummy, audit, env, filter) =>
             {
                 Config.SwitchConsole(ConsoleColor.Green, $"Abscence Assesment Environment - {env}");
                 string[] argumentList = { env };
                 Config.AbsenceBuilder(argumentList).Build().Run();
-            }, dummyOption, excellOption, environmentOption);
+            }, dummyOption, excellOption, environmentOption, filterOption);
 
 
             return await rootCommand.InvokeAsync(args);

@@ -22,12 +22,12 @@ public class AbsenceAssessment
         _pipeSelector = pipeSelector;
     }
 
-    public List<AssesmentRequestDTO> ProcessAbsenceAssessment(string environment, bool writeFlag)
+    public List<AssesmentRequestDTO> ProcessAbsenceAssessment(string environment, bool writeFlag, string pOid)
     {
         _logger.LogInformation("Query Absence Assessment Records");
         List<AssesmentRequestDTO> returnList = new List<AssesmentRequestDTO>();
         string numberCase = "";
-        var absenceDetails = _repository.GetAbsenceAssesments();
+        var absenceDetails = _repository.GetAbsenceAssesments(pOid.Split(":")); 
         if (absenceDetails.Any()){
         _logger.LogInformation($"Query Absence Assessment Count: {absenceDetails.Count()} records");
             foreach (var details in absenceDetails)

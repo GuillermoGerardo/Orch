@@ -15,6 +15,7 @@ namespace orch.Domain.Models
         public string CaseNumber { get; set; }
         public string Mrn { get; set; }
         public string Clinic { get; set; }
+        public string AssessmentCreationDate { get; set; }
         
     }
 }

@@ -2,7 +2,7 @@
   "profiles": {
     "orch": {
       "commandName": "Project",
-      "commandLineArgs": "abs -e QA_A -a -l",
+      "commandLineArgs": "abs -e DEV_A -a -l -f 184925:",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": ""
       },

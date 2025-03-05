@@ -24,16 +24,26 @@ public class AbsWorker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        string closed = "Done, Closing program.";
         var arrayList = Environment.GetCommandLineArgs();
+        string closed = "Done, Closing program.";
+        string pOid = "";
         var envIdx = Array.FindIndex( arrayList, x => x.Contains("-e") );
+        if (arrayList.Contains("-f") || arrayList.Contains("--filter")) 
+        {
+            var filterIdx = Array.FindIndex(arrayList, x => x.Contains("-f"));
+            pOid = arrayList[filterIdx + 1];
+            _logger.LogInformation("Filtered results with pOid: {pOid}", pOid);
+        }
         while (!stoppingToken.IsCancellationRequested)
         {
             if (_logger.IsEnabled(LogLevel.Information))
             {
                 _logger.LogInformation("Running at ({time})", DateTimeOffset.Now);
-                List<AssesmentRequestDTO> result = 
-                    _absenceAssessment.ProcessAbsenceAssessment(arrayList[envIdx + 1], (arrayList.Contains("--logging") || arrayList.Contains("-l")) );
+                List<AssesmentRequestDTO> result =
+                    _absenceAssessment.ProcessAbsenceAssessment
+                    (
+                        arrayList[envIdx + 1], (arrayList.Contains("--logging") || arrayList.Contains("-l")), pOid
+                    );
                 if (result.Count > 0 && (arrayList.Contains("-a") || arrayList.Contains("--audit"))) 
                 {
                     result = _queryService.PatientClinicMrn(result, "Absence");

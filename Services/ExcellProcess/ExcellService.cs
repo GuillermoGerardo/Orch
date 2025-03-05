@@ -33,8 +33,6 @@ namespace Orch.Services.ExcellProcess
             foreach (var item in assesmentRequest)
             {
                 cResult = item.PatientDetails.FirstOrDefault()!.Clinic.ToString();
-
-
                 printEntity.Add(new PrintAbscenceEntity()
                 {
                     PatientOid = item.PatientOid.ToString()!,
@@ -44,7 +42,8 @@ namespace Orch.Services.ExcellProcess
                         (item.CaseDetails.FirstOrDefault()!.caseNumber.ToString()!) != "0" ?
                         (item.CaseDetails.FirstOrDefault()!.caseNumber.ToString()!) : "-1"),
                     Mrn = item.PatientDetails.FirstOrDefault()!.Mrn.ToString(),
-                    Clinic = cResult.Split(":")[0]
+                    Clinic = cResult.Split(":")[0],
+                    AssessmentCreationDate = item.AssessmentDate
                 });
             }
             var wbook = new XLWorkbook();
@@ -55,6 +54,7 @@ namespace Orch.Services.ExcellProcess
             wsheet.Cell("D1").Value = "CaseNumber";
             wsheet.Cell("E1").Value = "Mrn";
             wsheet.Cell("F1").Value = "Clinic";
+            wsheet.Cell("G1").Value = "CollectedDate";
             //if (cResult)
             //{
 

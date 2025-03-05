@@ -19,6 +19,7 @@ namespace Core.Models
         public int? PatientOid  { get; set; }
         public int? PatientVisitOid { get; set; }
         public int? AssessmentId { get; set; }
+        public string AssessmentDate { get; set; }
 
         public ICollection<PatientDetails> PatientDetails { get; set; }
         public ICollection<CaseDetails> CaseDetails { get; set; }
